@@ -1,307 +1,394 @@
-/* import React from 'react';
-
-class App extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      data: 'Initial data...'
-    }
-    this.updateState = this.updateState.bind(this);
-  };
-  updateState() {
-    <h1>{this.props.headprop}</h1>
-    this.setState({ data: 'Data updated from the child component...' })
-  }
-  render() {
-    return (
-      <div>
-        <Content myDataProp={this.state.data}
-          updateStateProp={this.updateState}></Content>
-      </div>
-    );
-  }
-}
-class Content extends React.Component {
-  render() {
-    return (
-      <div>
-        <button onClick={this.props.updateStateProp}>CLICK</button>
-        <h3>{this.props.myDataProp}</h3>
-
-      </div>
-      );
-  }
-}
-export default App;
-/////////////// */
-// import React, {Component} from 'react';
-// // import Validation from 'react-validation';
-// // import "../validation.js";
-// import {Button, Form} from "react-bootstrap";
-
-// // import Map from './Map';
-// <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"></link>
-
-
-// export default class Registration extends Component {
-//     constructor(props) {
-//         super(props)
-//         this.state = {
-//             depname: '',
-//             }
-//         this.handleSubmit = this.handleSubmit.bind(this)
-//     }
-
-//     handleSubmit(event) {
-//         event.preventDefault()
-//         var data = {
-//             depname: this.state.depname,
-
-//         }
-//         console.log(data)
-//         fetch("/departments/"+data.depname, {
-//             method: 'POST',
-//             headers: {'Content-Type': 'application/json'},
-//             body: JSON.stringify(data)
-//         }).then(function(response) {
-//             if (response.status >= 400) {
-//               throw new Error("Bad response from server");
-//             }
-//             return response.json();
-//         }).then(function(data) {
-//             console.log(data)    
-//             if(data == "success"){
-//                this.setState({msg: "Thanks for registering"});  
-//             }
-//         }).catch(function(err) {
-//             console.log(err)
-//         });
-//     }
-
-//     logChange(e) {
-//        // this.setState({[e.target.name]: e.target.value});  
-//     }
-
-//     render() {
-//         return (
-//             <div className="container register-form">
-//                 <Form onSubmit={this.handleSubmit} method="POST">
-//                     <label>Name</label>
-//                     <input onChange={this.logChange}  className="form-control" value='' placeholder='enter dep name' name='depname'/>
-//                     <div className="submit-section">
-//                         <Button className="btn btn-uth-submit">Submit</Button>
-//                     </div>
-//                 </Form>
-//             </div>
-//         );
-//     }
-// }
-/* 
-import React, { Component } from 'react';
-// import Modal from 'react-modal';
-export default class Users extends Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            users: [{}]
-        }
-    }
-
-    componentDidMount() {
-        fetch('http://localhost:4000/departments', {
-            method: 'GET'
-        })
-        .then((Response) => {
-            console.log(Response[0].depid);
-            return Response.json();
-        }).then(function (data) {
-            console.log(data);
-            this.setState({ users: data });
-        }).catch(err => {
-            console.log('caught it!', err);
-        })
-    }
-
-    render() {
-        return (
-            <div className="container">
-                <div className="panel panel-default p50 uth-panel">
-                    <table className="table table-hover">
-                        <thead>
-                            <tr>
-                                <th> name</th>
-
-                            </tr>
-                        </thead>
-                        <tbody>
-                        {this.state.users.map(member =>
-                                <tr key={member.id}>
-                                    <td><a>Edit</a>|<a>Delete</a></td>
-                                    <td>{member.depname} </td>
-
-
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        );
-    }
-} */ 
 
 import React, { Component } from 'react';
 import './App.css';
 import Modal from 'react-responsive-modal';
-// import Button from 'react-bootstrap';
-// import table from 'react-bootstrap-table'
+
 import { Button } from 'react-bootstrap';
-{/* <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous"></link>; */}
+import { stat } from 'fs';
 const divStyle = {
-    margin: '100px',
-    border: '5px solid #4CAF50',
-    backgroundcolor:'#4CAF50',
+    margin: '50px',
+    border: '1px solid #4CAF50',
+    backgroundcolor: '#4CAF50',
     fontsize: '55px'
-  };
-  const thStyle={
+};
+const thStyle = {
     paddingtop: '12px',
     paddingbottom: '12px',
     textalign: 'left',
     backgroundcolor: '#4CAF50',
     color: 'white'
-  };
+};
 var data1;
 
- 
-class App extends Component {
-    constructor(){
-        super();
-        this.state ={departments: [],students:[],check_view_studnets:0,open_add_department_modal:0};
-    }
-    onOpenModal = () => {
-        this.setState({ open_add_department_modal: 1 });
-      };
-      onCloseModal = () => {
-        this.setState({ open_add_department_modal: 0 });
-      };
-    
-    componentDidMount() {
-        fetch('http://localhost:4000/departments', {
-  // mode: 'no-cors',
-  method: 'GET',
-  headers: {
-    Accept: 'application/json',
-  },
-},
-).then(response => {
-  if (response.ok) {
-    response.json().then(json => {
-      console.log(json);
-      data1= json;
-      this.setState({ departments: data1 });
-    });
-  }
-});}
-     edit_dep(sdep){
 
-        console.log("in edit button click "+sdep);
-        
-        
+class App1 extends Component {
+    constructor() {
+        super();
+        this.state = {student_id:0, edit_student_modal:false,edit_student_name:'',edit_student_age:'',edit_student_email:'',new_student_name: '', new_student_age: '', new_student_email: '', ref_dep_id: 0, ref_dep_name: '', refresh_department: false, departments: [], students: [], check_view_studnets: 0, open_department_modal: false, new_department: '', edit_department_modal: false, edit_department: '', view_students_modal: false };
     }
-    delete_dep(sdep){
-        console.log("in delete button click "+sdep);
-        fetch('http://localhost:4000/departments/'+sdep, {
+    onOpenModal = (str) => {
+        if (str === 'new department') {
+            this.setState({ open_department_modal: true });
+        }
+        if (str === 'edit department') {
+            console.log("u choose edit modal")
+            this.setState({ edit_department_modal: true });
+        }
+        if (str === 'view students') {
+            this.setState({ view_students_modal: true });
+        }
+        if (str === 'new student') {
+            this.setState({ new_student_modal: true });
+        }
+        if (str === 'edit student') {
+            this.setState({ edit_student_modal: true });
+        }
+    };
+    onCloseModal = (str) => {
+        if (str === 'new department') {
+            this.setState({ open_department_modal: false });
+        }
+        if (str === 'edit department') {
+            this.setState({ edit_department_modal: false });
+        }
+        if (str === 'view students') {
+            this.setState({ view_students_modal: false });
+        }
+        if (str === 'new student') {
+            this.setState({ new_student_modal: false });
+        }
+        if (str === 'edit student') {
+            this.setState({ edit_student_modal: false });
+        }
+    };
+
+    componentWillMount() {
+        fetch('http://localhost:4000/departments', {
+            method: 'GET',
+            headers: {
+                Accept: 'application/json',
+            },
+        },
+        ).then(response => {
+            if (response.ok) {
+                response.json().then(json => {
+                    console.log(json);
+                    data1 = json;
+                    this.setState({ departments: data1 });
+                });
+            }
+        });
+    }
+    add_dep() {
+        let depname = this.state.new_department;
+        this.setState({ open_department_modal: false });
+        fetch('http://localhost:4000/departments/' + depname, {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+            },
+        },
+        ).then(response => {
+            if (response.ok) {
+                // this.setState({ refresh_department: true });
+                console.log("addded succesfully!!");
+                this.componentWillMount();
+            }
+        });
+        this.setState({ new_department: '' });
+    }
+    add_student() {
+
+        this.setState({ view_students_modal: false });
+        console.log(this.state.ref_dep_id + "redddd");
+        fetch('http://localhost:4000/students/' + this.state.new_student_name + '/' + this.state.new_student_email + '/' + this.state.new_student_age + '/' + this.state.ref_dep_name + '/' + this.state.ref_dep_id, {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+            },
+        },
+        ).then(response => {
+            if (response.ok) {
+                this.setState({ refresh_department: true });
+                console.log("addded succesfully!!");
+                this.view_students(this.state.ref_dep_id, this.state.ref_dep_name);
+            }
+        });
+        this.setState({ refresh_department: false, new_student_age: '', new_student_name: '', new_student_email: '', new_student_modal: false });
+    }
+    handleChange(event) {
+        console.log(event.target.name + "ssssrrrrrrrrrr");
+        var dum = event.target.name;
+        if (dum === 'new_department') {
+            this.setState({
+                new_department: event.target.value
+            });
+        }
+        if (dum === 'edit_department') {
+            this.setState({
+                edit_department: event.target.value
+            });
+        }
+        if (dum === 'new_student_name') {
+            this.setState({
+                new_student_name: event.target.value
+            });
+        }
+        if (dum === 'new_student_age') {
+            this.setState({
+                new_student_age: event.target.value
+            });
+        }
+        if (dum === 'new_student_email') {
+            this.setState({
+                new_student_email: event.target.value
+            });
+        }
+        if (dum === 'edit_student_name') {
+            this.setState({
+                edit_student_name: event.target.value
+            });
+        }
+        if (dum === 'edit_student_age') {
+            this.setState({
+                edit_student_age: event.target.value
+            });
+        }
+        if (dum === 'edit_student_email') {
+            this.setState({
+                edit_student_email: event.target.value
+            });
+        }
+    }
+    ///////////////////////////
+    edit_dep(sdepname, sdepid) {
+        this.setState({ ref_dep_id: sdepid, edit_department_modal: true, edit_department: sdepname });
+    }
+    edit_student(sname, sage, semail,sid) {
+        this.setState({ edit_student_modal: true, edit_student_name: sname, edit_student_email:semail, edit_student_age:sage,student_id:sid });
+    }
+    update_dep() {
+        this.onCloseModal('edit department');
+        fetch('http://localhost:4000/departments/' + this.state.ref_dep_id + '/' + this.state.edit_department, {
+            method: 'PUT',
+            headers: {
+                Accept: 'application/json',
+            },
+        },
+        ).then(response => {
+            if (response.ok) {
+                console.log("updatedd succesfuly");
+                this.componentWillMount();
+            }
+        });
+    }
+    update_student() {
+        this.onCloseModal('edit student');
+        fetch('http://localhost:4000/students/' + this.state.student_id + '/' + this.state.edit_student_name+'/'+this.state.edit_student_email+'/'+this.state.edit_student_age+'/'+this.state.ref_dep_name+'/'+this.state.ref_dep_id, {
+            method: 'PUT',
+            headers: {
+                Accept: 'application/json',
+            },
+        },
+        ).then(response => {
+            if (response.ok) {
+                console.log("updatedd succesfuly");
+                this.view_students(this.state.ref_dep_id, this.state.ref_dep_name);
+            }
+        });
+    }
+    delete_dep(sdep) {
+        console.log("in delete button click " + sdep);
+        fetch('http://localhost:4000/departments/' + sdep, {
+            // mode: 'no-cors',
+            method: 'DELETE',
+            headers: {
+                Accept: 'application/json',
+            },
+        },
+        ).then(response => {
+            if (response.ok) {
+                console.log("deleted succesfuly");
+                this.componentWillMount();
+            }
+        });
+
+    }
+    delete_student(stuid) {
+        console.log("in delete button click " + stuid);
+        fetch('http://localhost:4000/students/' + stuid, {
+            // mode: 'no-cors',
+            method: 'DELETE',
+            headers: {
+                Accept: 'application/json',
+            },
+        },
+        ).then(response => {
+            if (response.ok) {
+                console.log("deleted succesfuly");
+                this.view_students(this.state.ref_dep_id, this.state.ref_dep_name);
+            }
+        });
+    }
+    view_students(sdep, sdepname) {
+        this.setState({ ref_dep_name: sdepname, ref_dep_id: sdep });
+
+        console.log("in view students" + sdep);
+        this.onOpenModal('view students');
+        fetch('http://localhost:4000/students/' + sdep, {
             // mode: 'no-cors',
             method: 'GET',
             headers: {
-              Accept: 'application/json',
+                Accept: 'application/json',
             },
-          },
-          ).then(response => {
+        },
+        ).then(response => {
             if (response.ok) {
-              response.json().then(json => {
-                console.log(json);
-                data1= json;
-                this.setState({ students: data1 , check_view_studnets:1});
-              });
+                response.json().then(json => {
+                    console.log(json);
+                    data1 = json;
+                    this.setState({ students: data1, check_view_studnets: 1 });
+                });
             }
-          });
-        
-    }
-    view_students(sdep){
-        console.log("in view students"+sdep);
-       
-            fetch('http://localhost:4000/students/'+sdep, {
-      // mode: 'no-cors',
-      method: 'GET',
-      headers: {
-        Accept: 'application/json',
-      },
-    },
-    ).then(response => {
-      if (response.ok) {
-        response.json().then(json => {
-          console.log(json);
-          data1= json;
-          this.setState({ students: data1 , check_view_studnets:1});
         });
-      }
-    });}
-   /*  if(this.state.check_view_studnets){
-        console.log("u chose studentssssds");
-        this.setState({ students: false });
-    } */
+    }
 
-  render() {
-  /*   if(this.state.check_view_studnets===1){
-        console.log("u chose studentssssds");
-        this.setState({ check_view_studnets: 0 });
-        return "helloo";
+    render() {
 
-        }
-        else{ */
-    return (
-      <div className="App" style={divStyle}>
-       
-        <div className="panel panel-default p50 uth-panel">
-        <div className="container">
-                <div className="panel panel-default p50 uth-panel">
-                    <table className="table table-hover">
-                        <thead>
-                            <tr>
-                            <th> Department</th>
-                                <th> ID</th>
-                                <th colSpan='3'> Actions</th>
-                                
-                               
+        const open = this.state.open_department_modal;
 
-                            </tr>
-                        </thead>
-                        <tbody>
-                        {this.state.departments.map(member =>
-                                <tr key={member.depid}>
-                                 <td>{member.depname} </td>
-                                    <td>{member.depid} </td>
-                                   <td><Button bsStyle="info" onClick={this.view_students.bind(this, member.depid)} > View Students</Button></td><td> <Button bsStyle="warning"  onClick={this.edit_dep.bind(this, member.depid)} > Edit</Button></td><td><Button bsStyle="danger" onClick={this.delete_dep.bind(this, member.depid)} >Delete</Button></td>
-                                   
-                                    
+        const edit_department_modal = this.state.edit_department_modal;
+        const view_students_modal = this.state.view_students_modal;
+        const new_student_modal = this.state.new_student_modal;
+        const edit_student_modal= this.state.edit_student_modal;
+        console.log(new_student_modal + "ssssssssssssssssssssssssssssss");
+        return (
+
+            <div className="App" >
+                <br />
+                <br />
+                <h2>Department Details</h2>
+                <div className="panel panel-default p50 uth-panel" style={divStyle}>
+
+                    <div className="container">
+
+                        <div className="panel panel-default p50 uth-panel">
+                            <table className="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th> Department</th>
+                                        <th> ID</th>
+                                        <th colSpan='3'> Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {this.state.departments.map(member =>
+                                        <tr key={member.depid}>
+                                            <td>{member.depname} </td>
+                                            <td>{member.depid} </td>
+                                            {/* <td><Button bsStyle="info" onClick={this.view_students.bind(this, member.depid)} > View Students</Button></td><td> <Button bsStyle="warning"  onClick={this.edit_dep.bind(this, member.depid)} > Edit</Button></td><td><Button bsStyle="danger" onClick={this.delete_dep.bind(this, member.depid)} >Delete</Button></td> */}
+                                            <td><Button bsStyle="info" onClick={this.view_students.bind(this, member.depid, member.depname)} > View Students</Button></td><td> <Button bsStyle="warning" onClick={this.edit_dep.bind(this, member.depname, member.depid)} > Edit</Button></td><td><Button bsStyle="danger" onClick={this.delete_dep.bind(this, member.depid)} >Delete</Button></td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+
+                        </div>
+
+                        <Button bsStyle="success" onClick={this.onOpenModal.bind(this, 'new department')}  > Add Department</Button>
+                        <Modal open={open} onClose={this.onCloseModal.bind(this, 'new department')} >
+
+                            <h2>Add Department </h2>
+                            <br /> Department<br />
+                            <input id="new_depname" name="new_department" type="text" value={this.state.new_department} onChange={this.handleChange.bind(this)} ></input>
 
 
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
-                   
+                            <br />
+                            <Button bsStyle="success" onClick={this.add_dep.bind(this)}  > save</Button>
+                        </Modal>
+                        <Modal open={edit_department_modal} onClose={this.onCloseModal.bind(this, 'edit department')} >
+
+                            <h2>Edit Department </h2>
+                            <br /> Department<br />
+                            <input id="edit_depname" name="edit_department" type="text" value={this.state.edit_department} onChange={this.handleChange.bind(this)} ></input>
+
+
+                            <br />
+                            <Button bsStyle="success" onClick={this.update_dep.bind(this)}  > update</Button>
+                        </Modal>
+
+
+
+                        <Modal open={view_students_modal} onClose={this.onCloseModal.bind(this, 'view students')} >
+
+                            <div className="panel panel-default p50 uth-panel">
+                                <h4> Students of Class:</h4> <span>    </span><h3>{this.state.ref_dep_name}</h3>
+                                <table className="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th> ID</th>
+                                            <th> Name</th>
+                                            <th> Email</th>
+                                            <th> Age</th>
+                                            <th colSpan='2'> Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {this.state.students.map(member =>
+                                            <tr key={member.id}>
+                                            <td> {member.id}</td>
+                                                <td>{member.sname} </td>
+                                                <td>{member.semail} </td>
+                                                <td>{member.sage} </td>
+
+                                                {/* <td><Button bsStyle="info" onClick={this.view_students.bind(this, member.depid)} > View Students</Button></td><td> <Button bsStyle="warning"  onClick={this.edit_dep.bind(this, member.depid)} > Edit</Button></td><td><Button bsStyle="danger" onClick={this.delete_dep.bind(this, member.depid)} >Delete</Button></td> */}
+                                                <td> <Button bsStyle="warning" onClick= {this.edit_student.bind(this,member.sname,member.sage,member.semail,member.id)} > Edit</Button></td><td><Button bsStyle="danger" onClick={this.delete_student.bind(this, member.id)} >Delete</Button></td>
+                                            </tr>
+                                        )}
+                                    </tbody>
+                                </table>
+
+                            </div>
+                            <Button bsStyle="success" onClick={this.onOpenModal.bind(this, 'new student')} > Add student</Button>
+                        </Modal>
+                        <Modal open={new_student_modal} onClose={this.onCloseModal.bind(this, 'new student')} >
+
+                            <h2>Add student </h2>
+                            <br /> Name<br />
+                            <input id="new_student_name" name="new_student_name" type="text" value={this.state.new_student_name} onChange={this.handleChange.bind(this)} ></input>
+                            <br /> Age<br />
+                            <input id="new_student_age" name="new_student_age" type="text" value={this.state.new_student_age} onChange={this.handleChange.bind(this)} ></input>
+                            <br /> Email<br />
+                            <input id="new_student_email" name="new_student_email" type="text" value={this.state.new_student_email} onChange={this.handleChange.bind(this)} ></input>
+
+
+                            <br />
+                            <Button bsStyle="success" onClick={this.add_student.bind(this)}  > save</Button>
+                        </Modal>
+                        <Modal open={edit_student_modal} onClose={this.onCloseModal.bind(this, 'edit student')} >
+
+                            <h2>Edit Student </h2>
+                            <br /> Name<br />
+                            <input id="edit_student_name" name="edit_student_name" type="text" value={this.state.edit_student_name} onChange={this.handleChange.bind(this)} ></input>
+                            <br /> Age<br />
+                            <input id="edit_student_age" name="edit_student_age" type="text" value={this.state.edit_student_age} onChange={this.handleChange.bind(this)} ></input>
+                            <br /> Email<br />
+                            <input id="edit_student_email" name="edit_student_email" type="text" value={this.state.edit_student_email} onChange={this.handleChange.bind(this)} ></input>
+
+
+                            <br />
+                            <Button bsStyle="success" onClick={this.update_student.bind(this)}  > update</Button>
+                        </Modal>
+                    </div>
                 </div>
+
             </div>
-            <Button bsStyle="success"  > Add Department</Button>
-                </div>
-        {/* <table data1={data1}/> */}
-      </div>
-      
-     
-    );
-}}
 
-export default App;
+
+
+
+        );
+    }
+}
+
+export default App1;
