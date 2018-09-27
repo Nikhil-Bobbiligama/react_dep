@@ -1,30 +1,23 @@
-
 import React, { Component } from 'react';
 import './App.css';
 import Modal from 'react-responsive-modal';
-
 import { Button } from 'react-bootstrap';
-import { stat } from 'fs';
 const divStyle = {
     margin: '50px',
-    border: '1px solid #4CAF50',
+
     backgroundcolor: '#4CAF50',
-    fontsize: '55px'
+    fontsize: '55px',
+    width: '70%'
 };
-const thStyle = {
-    paddingtop: '12px',
-    paddingbottom: '12px',
-    textalign: 'left',
-    backgroundcolor: '#4CAF50',
-    color: 'white'
-};
+
 var data1;
 
 
 class App1 extends Component {
     constructor() {
         super();
-        this.state = {student_id:0, edit_student_modal:false,edit_student_name:'',edit_student_age:'',edit_student_email:'',new_student_name: '', new_student_age: '', new_student_email: '', ref_dep_id: 0, ref_dep_name: '', refresh_department: false, departments: [], students: [], check_view_studnets: 0, open_department_modal: false, new_department: '', edit_department_modal: false, edit_department: '', view_students_modal: false };
+        console.log("in constructor");
+        this.state = {new_student_modal:false, student_id: 0, edit_student_modal: false, edit_student_name: '', edit_student_age: '', edit_student_email: '', new_student_name: '', new_student_age: '', new_student_email: '', ref_dep_id: 0, ref_dep_name: '', refresh_department: false, departments: [], students: [], check_view_studnets: 0, open_department_modal: false, new_department: '', edit_department_modal: false, edit_department: '', view_students_modal: false };
     }
     onOpenModal = (str) => {
         if (str === 'new department') {
@@ -69,9 +62,10 @@ class App1 extends Component {
                 Accept: 'application/json',
             },
         },
-        ).then(response => {
-            if (response.ok) {
-                response.json().then(json => {
+        ).then(respons => {
+            console.log("responnsss"+respons);
+            if (respons.ok) {
+                respons.json().then(json => {
                     console.log(json);
                     data1 = json;
                     this.setState({ departments: data1 });
@@ -90,7 +84,7 @@ class App1 extends Component {
         },
         ).then(response => {
             if (response.ok) {
-                // this.setState({ refresh_department: true });
+                console.log(response);
                 console.log("addded succesfully!!");
                 this.componentWillMount();
             }
@@ -98,9 +92,7 @@ class App1 extends Component {
         this.setState({ new_department: '' });
     }
     add_student() {
-
         this.setState({ view_students_modal: false });
-        console.log(this.state.ref_dep_id + "redddd");
         fetch('http://localhost:4000/students/' + this.state.new_student_name + '/' + this.state.new_student_email + '/' + this.state.new_student_age + '/' + this.state.ref_dep_name + '/' + this.state.ref_dep_id, {
             method: 'POST',
             headers: {
@@ -111,6 +103,8 @@ class App1 extends Component {
             if (response.ok) {
                 this.setState({ refresh_department: true });
                 console.log("addded succesfully!!");
+                // setInterval(this.view_students,5000);
+
                 this.view_students(this.state.ref_dep_id, this.state.ref_dep_name);
             }
         });
@@ -164,8 +158,8 @@ class App1 extends Component {
     edit_dep(sdepname, sdepid) {
         this.setState({ ref_dep_id: sdepid, edit_department_modal: true, edit_department: sdepname });
     }
-    edit_student(sname, sage, semail,sid) {
-        this.setState({ edit_student_modal: true, edit_student_name: sname, edit_student_email:semail, edit_student_age:sage,student_id:sid });
+    edit_student(sname, sage, semail, sid) {
+        this.setState({ edit_student_modal: true, edit_student_name: sname, edit_student_email: semail, edit_student_age: sage, student_id: sid });
     }
     update_dep() {
         this.onCloseModal('edit department');
@@ -184,10 +178,12 @@ class App1 extends Component {
     }
     update_student() {
         this.onCloseModal('edit student');
-        fetch('http://localhost:4000/students/' + this.state.student_id + '/' + this.state.edit_student_name+'/'+this.state.edit_student_email+'/'+this.state.edit_student_age+'/'+this.state.ref_dep_name+'/'+this.state.ref_dep_id, {
+        fetch('http://localhost:4000/students/' + this.state.student_id + '/' + this.state.edit_student_name + '/' + this.state.edit_student_email + '/' + this.state.edit_student_age + '/' + this.state.ref_dep_name + '/' + this.state.ref_dep_id, {
+
             method: 'PUT',
+            Data: { pname: this.state.edit_student_name },
             headers: {
-                Accept: 'application/json',
+                Accept: 'json/application/JSON',
             },
         },
         ).then(response => {
@@ -198,9 +194,7 @@ class App1 extends Component {
         });
     }
     delete_dep(sdep) {
-        console.log("in delete button click " + sdep);
         fetch('http://localhost:4000/departments/' + sdep, {
-            // mode: 'no-cors',
             method: 'DELETE',
             headers: {
                 Accept: 'application/json',
@@ -215,9 +209,7 @@ class App1 extends Component {
 
     }
     delete_student(stuid) {
-        console.log("in delete button click " + stuid);
         fetch('http://localhost:4000/students/' + stuid, {
-            // mode: 'no-cors',
             method: 'DELETE',
             headers: {
                 Accept: 'application/json',
@@ -232,11 +224,8 @@ class App1 extends Component {
     }
     view_students(sdep, sdepname) {
         this.setState({ ref_dep_name: sdepname, ref_dep_id: sdep });
-
-        console.log("in view students" + sdep);
-        this.onOpenModal('view students');
+       
         fetch('http://localhost:4000/students/' + sdep, {
-            // mode: 'no-cors',
             method: 'GET',
             headers: {
                 Accept: 'application/json',
@@ -246,30 +235,25 @@ class App1 extends Component {
             if (response.ok) {
                 response.json().then(json => {
                     console.log(json);
+                    console.log(response);
                     data1 = json;
-                    this.setState({ students: data1, check_view_studnets: 1 });
+                    this.setState({ students: data1});
                 });
             }
-        });
-    }
+        }); 
+        console.log("request to openn modal");
+        this.onOpenModal('view students'); }
 
     render() {
 
-        const open = this.state.open_department_modal;
-
-        const edit_department_modal = this.state.edit_department_modal;
-        const view_students_modal = this.state.view_students_modal;
-        const new_student_modal = this.state.new_student_modal;
-        const edit_student_modal= this.state.edit_student_modal;
-        console.log(new_student_modal + "ssssssssssssssssssssssssssssss");
         return (
 
             <div className="App" >
                 <br />
                 <br />
-                <h2>Department Details</h2>
-                <div className="panel panel-default p50 uth-panel" style={divStyle}>
 
+                <div className="panel panel-default p50 uth-panel" style={divStyle}>
+                    <h2>Department Details</h2>
                     <div className="container">
 
                         <div className="panel panel-default p50 uth-panel">
@@ -286,7 +270,6 @@ class App1 extends Component {
                                         <tr key={member.depid}>
                                             <td>{member.depname} </td>
                                             <td>{member.depid} </td>
-                                            {/* <td><Button bsStyle="info" onClick={this.view_students.bind(this, member.depid)} > View Students</Button></td><td> <Button bsStyle="warning"  onClick={this.edit_dep.bind(this, member.depid)} > Edit</Button></td><td><Button bsStyle="danger" onClick={this.delete_dep.bind(this, member.depid)} >Delete</Button></td> */}
                                             <td><Button bsStyle="info" onClick={this.view_students.bind(this, member.depid, member.depname)} > View Students</Button></td><td> <Button bsStyle="warning" onClick={this.edit_dep.bind(this, member.depname, member.depid)} > Edit</Button></td><td><Button bsStyle="danger" onClick={this.delete_dep.bind(this, member.depid)} >Delete</Button></td>
                                         </tr>
                                     )}
@@ -296,33 +279,25 @@ class App1 extends Component {
                         </div>
 
                         <Button bsStyle="success" onClick={this.onOpenModal.bind(this, 'new department')}  > Add Department</Button>
-                        <Modal open={open} onClose={this.onCloseModal.bind(this, 'new department')} >
-
+                        <Modal open={this.state.open_department_modal} onClose={this.onCloseModal.bind(this, 'new department')} >
                             <h2>Add Department </h2>
                             <br /> Department<br />
                             <input id="new_depname" name="new_department" type="text" value={this.state.new_department} onChange={this.handleChange.bind(this)} ></input>
-
-
                             <br />
                             <Button bsStyle="success" onClick={this.add_dep.bind(this)}  > save</Button>
                         </Modal>
-                        <Modal open={edit_department_modal} onClose={this.onCloseModal.bind(this, 'edit department')} >
+                        <Modal open={this.state.edit_department_modal} onClose={this.onCloseModal.bind(this, 'edit department')} >
 
                             <h2>Edit Department </h2>
                             <br /> Department<br />
                             <input id="edit_depname" name="edit_department" type="text" value={this.state.edit_department} onChange={this.handleChange.bind(this)} ></input>
-
-
                             <br />
                             <Button bsStyle="success" onClick={this.update_dep.bind(this)}  > update</Button>
                         </Modal>
-
-
-
-                        <Modal open={view_students_modal} onClose={this.onCloseModal.bind(this, 'view students')} >
+                        <Modal open={this.state.view_students_modal} onClose={this.onCloseModal.bind(this, 'view students')} >
 
                             <div className="panel panel-default p50 uth-panel">
-                                <h4> Students of Class:</h4> <span>    </span><h3>{this.state.ref_dep_name}</h3>
+                                <h4> Students of Department:</h4> <span>    </span><h3>{this.state.ref_dep_name}</h3>
                                 <table className="table table-hover">
                                     <thead>
                                         <tr>
@@ -336,13 +311,13 @@ class App1 extends Component {
                                     <tbody>
                                         {this.state.students.map(member =>
                                             <tr key={member.id}>
-                                            <td> {member.id}</td>
+                                                <td> {member.id}</td>
                                                 <td>{member.sname} </td>
                                                 <td>{member.semail} </td>
                                                 <td>{member.sage} </td>
 
                                                 {/* <td><Button bsStyle="info" onClick={this.view_students.bind(this, member.depid)} > View Students</Button></td><td> <Button bsStyle="warning"  onClick={this.edit_dep.bind(this, member.depid)} > Edit</Button></td><td><Button bsStyle="danger" onClick={this.delete_dep.bind(this, member.depid)} >Delete</Button></td> */}
-                                                <td> <Button bsStyle="warning" onClick= {this.edit_student.bind(this,member.sname,member.sage,member.semail,member.id)} > Edit</Button></td><td><Button bsStyle="danger" onClick={this.delete_student.bind(this, member.id)} >Delete</Button></td>
+                                                <td> <Button bsStyle="warning" onClick={this.edit_student.bind(this, member.sname, member.sage, member.semail, member.id)} > Edit</Button></td><td><Button bsStyle="danger" onClick={this.delete_student.bind(this, member.id)} >Delete</Button></td>
                                             </tr>
                                         )}
                                     </tbody>
@@ -351,7 +326,7 @@ class App1 extends Component {
                             </div>
                             <Button bsStyle="success" onClick={this.onOpenModal.bind(this, 'new student')} > Add student</Button>
                         </Modal>
-                        <Modal open={new_student_modal} onClose={this.onCloseModal.bind(this, 'new student')} >
+                        <Modal open={this.state.new_student_modal} onClose={this.onCloseModal.bind(this, 'new student')} >
 
                             <h2>Add student </h2>
                             <br /> Name<br />
@@ -365,7 +340,7 @@ class App1 extends Component {
                             <br />
                             <Button bsStyle="success" onClick={this.add_student.bind(this)}  > save</Button>
                         </Modal>
-                        <Modal open={edit_student_modal} onClose={this.onCloseModal.bind(this, 'edit student')} >
+                        <Modal open={this.state.edit_student_modal} onClose={this.onCloseModal.bind(this, 'edit student')} >
 
                             <h2>Edit Student </h2>
                             <br /> Name<br />
@@ -374,8 +349,6 @@ class App1 extends Component {
                             <input id="edit_student_age" name="edit_student_age" type="text" value={this.state.edit_student_age} onChange={this.handleChange.bind(this)} ></input>
                             <br /> Email<br />
                             <input id="edit_student_email" name="edit_student_email" type="text" value={this.state.edit_student_email} onChange={this.handleChange.bind(this)} ></input>
-
-
                             <br />
                             <Button bsStyle="success" onClick={this.update_student.bind(this)}  > update</Button>
                         </Modal>
@@ -384,11 +357,9 @@ class App1 extends Component {
 
             </div>
 
-
-
-
         );
     }
 }
 
 export default App1;
+
