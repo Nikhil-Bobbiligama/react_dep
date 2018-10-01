@@ -1,0 +1,8 @@
+export const FETCH_POSTS = 'FETCH_POSTS';
+export const NEW_POST = 'NEW_POST';
+export const FETCH_STUDENTS = 'FETCH_STUDENTS';
+export const DELETE_DEPARTMENT = 'DELETE_DEPARTMENT';
+export const ADD_STUDENT = 'ADD_STUDENT';
+export const DELETE_STUDENT = 'DELETE_STUDENT';
+
+
